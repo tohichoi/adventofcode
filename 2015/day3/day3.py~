@@ -1,0 +1,90 @@
+#!/usr/bin/env python
+
+
+from collections import defaultdict
+
+
+# initial position
+def part1(data, H, ix, iy):
+
+    cx=ix
+    cy=iy
+    for s in data:
+        dx=0
+        dy=0
+        if s == '^':
+            dy=1
+        elif s == 'v':
+            dy=-1
+        elif s == '<':
+            dx=-1
+        elif s == '>':
+            dx=1
+        else:
+            print 'Invalid direction: ' + s
+            break
+
+        cx+=dx
+        cy+=dy
+        
+        H[(cx, cy)]+=1
+
+    return H.keys()
+
+
+def is_sep(s1, s2):
+
+    return (s1=='^' and s2=='v') or (s1=='<' and s2=='>')
+
+
+def part2(data, H, ix, iy):
+
+    cx=ix
+    cy=iy
+    for i in range(len(data)-1):
+        s=data[i]
+        dx=0
+        dy=0
+        
+        if s == '^':
+            dy=1
+        elif s == 'v':
+            dy=-1
+        elif s == '<':
+            dx=-1
+        elif s == '>':
+            dx=1
+        else:
+            print 'Invalid direction: ' + s
+            break
+
+        cx+=dx
+        cy+=dy
+        
+        H[(cx, cy)]+=1
+
+        if is_sep(data[i], data[i+1]):
+            # santa
+            
+            part2([data[i] for i in range(i, len(data)-i, 2)], H, cx, cy)
+
+            # robot
+            part2([data[i] for i in range(i+1, len(data)-i-1, 2)], H, cx, cy)
+
+            break
+    
+fd=open('input.txt')
+
+# data=fd.read().strip()
+data='^v^v^v^v^v'
+
+
+H=defaultdict(int)
+# part1(data, H, 0, 0)
+
+part2(data, H, 0, 0)
+
+print H.keys()
+
+fd.close()
+
