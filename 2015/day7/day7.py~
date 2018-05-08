@@ -1,0 +1,64 @@
+#!/usr/bin/env python
+
+
+from collections import defaultdict
+import numpy as np
+import StringIO
+
+
+def eval_inst(sym, t):
+
+    n=len(t)
+
+    # assignment
+    if n==3:
+        try:
+            c=int(t[0])
+            sym[t[2]]=np.int16(c)
+        except ValueError:
+            sym[t[2]]=sym[t[0]]
+    # unary operator
+    elif n==4:
+        if t[0]=='NOT':
+            sym[t[3]]=np.invert(sym[t[1]])
+        else:
+            print 'Unknown operator : ' + t[0]
+    # binary operator
+    elif n==5:
+        if t[1]=='AND':
+            sym[t[4]]=np.bitwise_and(sym[t[0]], sym[t[2]])
+        elif t[1]=='OR':
+            sym[t[4]]=np.bitwise_or(sym[t[0]], sym[t[2]])
+        elif t[1]=='LSHIFT':
+            sym[t[4]]=np.left_shift(sym[t[0]], int(t[2]))
+        elif t[1]=='RSHIFT':
+            sym[t[4]]=np.right_shift(sym[t[0]], int(t[2]))
+        else:
+            print 'Unknown operator : ' + t[1]
+        
+booklet=defaultdict(list)
+sym=defaultdict(np.int16)
+
+instructions='''123 -> x
+456 -> y
+x AND y -> d
+x OR y -> e
+x LSHIFT 2 -> f
+y RSHIFT 2 -> g
+NOT x -> h
+NOT y -> i'''
+
+fd=open('input.txt')
+# fd=StringIO.StringIO(instructions)
+
+for line in fd.readlines():
+    tokens=line.strip().split()
+    
+    n=len(tokens)
+
+    eval_inst(sym, tokens)
+
+for k, v in sym.items():
+    print '%s = %u' % (k, (v & 0xffff))
+    
+fd.close()
