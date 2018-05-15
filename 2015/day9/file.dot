@@ -1,0 +1,5 @@
+strict graph  {
+	Dublin -- London	 [label=464];
+	Dublin -- Belfast	 [label=141];
+	London -- Belfast	 [label=518];
+}
